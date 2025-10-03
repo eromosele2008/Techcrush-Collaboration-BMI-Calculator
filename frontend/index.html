@@ -41,12 +41,23 @@
       color: #444;
     }
 
-    input, select {
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
       padding: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
       font-size: 14px;
-      width: 100%;
+    }
+
+    span.unit {
+      font-size: 14px;
+      color: #555;
     }
 
     button {
@@ -69,7 +80,7 @@
       padding: 15px;
       border-radius: 8px;
       font-weight: bold;
-      display: none; /* backend will show */
+      display: none; /* Hidden until result comes */
     }
 
     .error {
@@ -94,38 +105,90 @@
 <body>
   <div class="container">
     <h2>Mini BMI Calculator</h2>
-    <form method="POST" action="/calculate">
+
+    <!-- Form for user input -->
+    <form id="bmiForm">
       <div>
         <label for="height">Height</label>
-        <input type="text" id="height" name="height" placeholder="Enter height" required>
-        <select name="height_unit">
-          <option value="cm">cm</option>
-          <option value="m">m</option>
-          <option value="in">inches</option>
-        </select>
+        <div class="input-group">
+          <input type="text" id="height" name="height" placeholder="Please enter height in Meter(s)" required>
+          <span class="unit">m</span>
+        </div>
       </div>
 
       <div>
         <label for="weight">Weight</label>
-        <input type="text" id="weight" name="weight" placeholder="Enter weight" required>
-        <select name="weight_unit">
-          <option value="kg">kg</option>
-          <option value="lb">lbs</option>
-        </select>
+        <div class="input-group">
+          <input type="text" id="weight" name="weight" placeholder="Please enter weight in Kilogram(s)" required>
+          <span class="unit">kg</span>
+        </div>
       </div>
 
       <button type="submit">Calculate BMI</button>
     </form>
 
-    <!-- Placeholder for server response -->
+    <!-- Success response placeholder -->
     <div class="result success" id="bmiResult">
-      <p>Your BMI is: <strong>22.3</strong></p>
-      <p class="category">Category: Normal Weight</p>
+      <p>Your BMI is: <strong id="bmiValue"></strong></p>
+      <p class="category">Category: <span id="bmiCategory"></span></p>
     </div>
 
+    <!-- Error message placeholder -->
     <div class="result error" id="errorMessage">
       <p>Error: Please enter valid numbers for height and weight.</p>
     </div>
   </div>
+
+  <script>
+    // Get references to form and result containers
+    const bmiForm = document.getElementById("bmiForm");
+    const bmiResultDiv = document.getElementById("bmiResult");
+    const errorDiv = document.getElementById("errorMessage");
+    const bmiValue = document.getElementById("bmiValue");
+    const bmiCategory = document.getElementById("bmiCategory");
+
+    // Handle form submit
+    bmiForm.addEventListener("submit", async function(event) {
+      event.preventDefault(); // Stop default form POST
+
+      // Get user inputs
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+
+      // Validate
+      if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {
+        errorDiv.style.display = "block";
+        bmiResultDiv.style.display = "none";
+        return;
+      }
+
+      try {
+        // Send values to backend
+        const response = await fetch("/calculate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ height, weight })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Show result from backend
+          bmiValue.textContent = data.bmi;
+          bmiCategory.textContent = data.category;
+          bmiResultDiv.style.display = "block";
+          errorDiv.style.display = "none";
+        } else {
+          // Show error
+          errorDiv.style.display = "block";
+          bmiResultDiv.style.display = "none";
+        }
+      } catch (err) {
+        // Handle fetch/network errors
+        errorDiv.style.display = "block";
+        bmiResultDiv.style.display = "none";
+      }
+    });
+  </script>
 </body>
 </html>
