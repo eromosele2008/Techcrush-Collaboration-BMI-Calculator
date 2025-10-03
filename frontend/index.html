@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMI Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 350px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      text-align: left;
+      font-size: 14px;
+      color: #444;
+    }
+
+    input, select {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    button {
+      padding: 12px;
+      background: #4CAF50;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      display: none; /* backend will show */
+    }
+
+    .error {
+      color: #b71c1c;
+      background: #ffebee;
+      border: 1px solid #f44336;
+    }
+
+    .success {
+      color: #1b5e20;
+      background: #e8f5e9;
+      border: 1px solid #4caf50;
+    }
+
+    .category {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Mini BMI Calculator</h2>
+    <form method="POST" action="/calculate">
+      <div>
+        <label for="height">Height</label>
+        <input type="text" id="height" name="height" placeholder="Enter height" required>
+        <select name="height_unit">
+          <option value="cm">cm</option>
+          <option value="m">m</option>
+          <option value="in">inches</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="weight">Weight</label>
+        <input type="text" id="weight" name="weight" placeholder="Enter weight" required>
+        <select name="weight_unit">
+          <option value="kg">kg</option>
+          <option value="lb">lbs</option>
+        </select>
+      </div>
+
+      <button type="submit">Calculate BMI</button>
+    </form>
+
+    <!-- Placeholder for server response -->
+    <div class="result success" id="bmiResult">
+      <p>Your BMI is: <strong>22.3</strong></p>
+      <p class="category">Category: Normal Weight</p>
+    </div>
+
+    <div class="result error" id="errorMessage">
+      <p>Error: Please enter valid numbers for height and weight.</p>
+    </div>
+  </div>
+</body>
+</html>
