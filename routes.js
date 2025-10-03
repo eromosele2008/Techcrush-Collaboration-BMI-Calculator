@@ -4,7 +4,7 @@ import { calculateBMI } from "./bmiApi.js";
 
 const router = express.Router();
 
-// POST /bmi
+// POST 
 router.post("/bmi", (req, res) => {
   const { weight, height } = req.body;
 
